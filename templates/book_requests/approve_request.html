@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}
+Approve Request
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white py-3">
+
+            <h3>
+
+                ✅ Approve Book Request
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <h4>
+
+                {{ book_request.book.title }}
+
+            </h4>
+
+            <hr>
+
+            <p>
+
+                <strong>Accession Number:</strong>
+
+                {{ book_request.book.accession_number }}
+
+            </p>
+
+            <p>
+
+                <strong>Member:</strong>
+
+                {{ book_request.member.get_full_name|default:book_request.member.username }}
+
+            </p>
+
+            <p>
+
+                <strong>Requested On:</strong>
+
+                {{ book_request.requested_at|date:"d M Y H:i" }}
+
+            </p>
+
+            <hr>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Pickup Date
+
+                    </label>
+
+                    {{ form.pickup_date }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Pickup Time
+
+                    </label>
+
+                    {{ form.pickup_time }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Message
+
+                    </label>
+
+                    {{ form.librarian_message }}
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    Approve & Notify
+
+                </button>
+
+                <a
+                    href="{% url 'pending_requests' %}"
+                    class="btn btn-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+<script>
+
+flatpickr(".flatpickr-date", {
+
+    dateFormat: "Y-m-d",
+
+    minDate: "today",
+
+});
+
+flatpickr(".flatpickr-time", {
+
+    enableTime: true,
+
+    noCalendar: true,
+
+    dateFormat: "h:i K",
+    altInput: true,
+    altFormat: "h:i K",
+
+    time_24hr: false,
+
+});
+
+</script>
+
+{% endblock %}

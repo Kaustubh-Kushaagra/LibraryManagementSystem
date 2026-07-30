@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+  {% load static %}
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>MVTC Library Management</title>
+
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+    
+  </head>
+
+  <body class="d-flex flex-column min-vh-100 ">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow sticky-top py-3">
+      <div class="container">
+        <a class="navbar-brand fw-semibold" href="{% url 'dashboard' %}">
+          <img src="{% static 'images/logo.png' %}" height="34" class="me-2">
+
+          <span class="fw-semibold">
+              MVTC Library System
+          </span>
+        </a>
+
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          {% if user.is_authenticated %}
+
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">
+                📊 Dashboard
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'catalog' %}"> 📚 Catalog </a>
+            </li>
+
+            {% if user.role == "member" %}
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'my_books' %}"> 📚 My Books </a>
+            </li>
+
+            {% endif %} {% if user.role == "librarian" %}
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'member_list' %}">
+                👥 Members
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'import_home' %}">
+                📥 Import Books
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'reports_home' %}">
+                📊 Reports
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'administration_home' %}">
+                ⚙ Administration
+              </a>
+            </li>
+
+            {% endif %}
+          </ul>
+
+          <div class="dropdown me-3">
+  <button
+    class="btn btn-dark position-relative"
+    type="button"
+    id="notificationDropdown"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+    🔔
+
+    {% if unread_notification_count > 0 %}
+    <span
+      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+    >
+      {% if unread_notification_count > 99 %}
+        99+
+      {% else %}
+        {{ unread_notification_count }}
+      {% endif %}
+    </span>
+    {% endif %}
+  </button>
+
+  <ul
+    class="dropdown-menu dropdown-menu-end shadow"
+    style="width: 360px; max-height: 450px; overflow-y: auto;"
+  >
+
+    <li>
+      <h6 class="dropdown-header">
+        🔔 Notifications
+      </h6>
+    </li>
+
+    <li>
+      <hr class="dropdown-divider">
+    </li>
+
+
+    {% if notifications %}
+
+      {% for notification in notifications %}
+
+      <li>
+        {% if notification.link %}
+
+        <a
+          href="{% url 'read_notification' notification.id %}"
+          class="dropdown-item {% if notification.is_read %}text-muted bg-light{% else %}fw-bold{% endif %}"
+        >
+
+        {% else %}
+
+        <span class="dropdown-item text-muted">
+
+        {% endif %}
+
+
+          <strong class="{% if notification.is_read %}fw-normal{% endif %}">
+              {{ notification.title }}
+          </strong>
+
+          <br>
+
+          <small class="text-muted">
+            {{ notification.message }}
+          </small>
+
+          <br>
+
+          <small class="text-secondary">
+            {{ notification.created_at|timesince }} ago
+          </small>
+
+
+        {% if notification.link %}
+
+        </a>
+
+        {% else %}
+
+        </span>
+
+        {% endif %}
+
+      </li>
+
+
+      {% if not forloop.last %}
+
+      <li>
+        <hr class="dropdown-divider">
+      </li>
+
+      {% endif %}
+
+
+      {% endfor %}
+
+
+    {% else %}
+
+      <li>
+        <span class="dropdown-item-text text-muted">
+          No notifications yet.
+        </span>
+      </li>
+
+    {% endif %}
+
+  </ul>
+</div>
+            <div class="dropdown me-3">
+
+    <button
+        class="btn btn-light btn-sm dropdown-toggle"
+        data-bs-toggle="dropdown"
+    >
+
+        👤 {{ user.first_name|default:user.username }}
+
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end">
+
+        <li>
+
+            <a
+                class="dropdown-item"
+                href="{% url 'profile' %}"
+            >
+
+                👤 My Profile
+
+            </a>
+
+        </li>
+
+        {% if user.role == "member" %}
+
+        <li>
+
+            <a
+                class="dropdown-item"
+                href="{% url 'my_books' %}"
+            >
+
+                📚 My Books
+
+            </a>
+
+        </li>
+
+        {% endif %}
+
+        <li>
+
+    <button
+        class="dropdown-item"
+        id="theme-toggle"
+        type="button"
+    >
+
+        🌙 Dark Mode
+
+    </button>
+
+</li>
+
+        <li><hr class="dropdown-divider"></li>
+
+        <li>
+
+            <form method="post" action="{% url 'logout' %}">
+
+                {% csrf_token %}
+
+                <button
+                    class="dropdown-item text-danger"
+                    type="submit"
+                >
+
+                    🚪 Logout
+
+                </button>
+
+            </form>
+
+        </li>
+
+    </ul>
+
+</div>
+
+          {% else %}
+
+          <div class="ms-auto">
+            <a href="{% url 'login' %}" class="btn btn-outline-success me-2"> Login </a>
+
+            <a href="{% url 'register' %}" class="btn btn-primary shadow-sm">
+              Register
+            </a>
+          </div>
+
+          {% endif %}
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container py-5 flex-grow-1">
+      {% if messages %} {% for message in messages %}
+
+      <div
+        class="alert alert-{{ message.tags|default:'info' }} border-0 shadow-sm rounded-4 alert-dismissible fade show"
+      >
+        {{ message|safe }}
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+        ></button>
+      </div>
+
+      {% endfor %} {% endif %} {% block content %} {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark border-top border-secondary text-light mt-auto py-4">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <h5 class="mb-1">📚 MVTC Library Management System</h5>
+
+            <small class="text-secondary">
+              Vocational Training Centre
+
+              <br />
+
+              Naini Area
+              <br />
+
+
+              The Singareni Collieries Company Limited
+            </small>
+          </div>
+
+          <div class="col-md-6 text-md-end mt-3 mt-md-0">
+            <small class="text-secondary">
+              Version 1.0.0
+
+              <br />
+
+              © 2026 All Rights Reserved
+
+              <br />
+
+              Developed by Kaustubh Kushaagra
+
+              
+            </small>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+      window.addEventListener("load", function () {
+        flatpickr("#id_due_date", {
+          dateFormat: "Y-m-d",
+
+          altInput: true,
+
+          altFormat: "d-m-Y",
+
+          allowInput: true,
+
+          clickOpens: true,
+
+          disableMobile: true,
+
+          monthSelectorType: "dropdown",
+
+          animate: true,
+
+          minDate: "today",
+        });
+      });
+    </script>
+
+    <script>
+
+      console.log("Theme script loaded");
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const toggle = document.getElementById("theme-toggle");
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem("theme") || "light";
+
+    document.documentElement.setAttribute("data-theme", savedTheme);
+
+    updateButton(savedTheme);
+
+    if (toggle) {
+
+        toggle.addEventListener("click", function () {
+
+            let currentTheme = document.documentElement.getAttribute("data-theme");
+
+            let newTheme = currentTheme === "dark" ? "light" : "dark";
+
+            document.documentElement.setAttribute("data-theme", newTheme);
+
+            localStorage.setItem("theme", newTheme);
+
+            updateButton(newTheme);
+
+        });
+
+    }
+
+    function updateButton(theme){
+
+        if(!toggle) return;
+
+        if(theme === "dark"){
+
+            toggle.innerHTML = "☀️ Light Mode";
+
+        }else{
+
+            toggle.innerHTML = "🌙 Dark Mode";
+
+        }
+
+    }
+
+});
+
+</script>
+  </body>
+</html>

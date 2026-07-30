@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}
+Book Requests
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h2 class="mb-4">
+        📚 Book Requests
+    </h2>
+
+    {% if requests %}
+
+        {% for request in requests %}
+
+        <div class="card shadow-sm mb-3">
+
+            <div class="card-body">
+
+                <h4>
+                    {{ request.book.title }}
+                </h4>
+
+                <p class="mb-1">
+                    <strong>Accession Number:</strong>
+                    {{ request.book.accession_number }}
+                </p>
+
+                <p class="mb-1">
+                    <strong>Requested By:</strong>
+                    {{ request.member.get_full_name|default:request.member.username }}
+                </p>
+
+                <p class="mb-3">
+                    <strong>Requested On:</strong>
+                    {{ request.requested_at|date:"d M Y H:i" }}
+                </p>
+
+                <p class="mb-3">
+
+    <strong>Status:</strong>
+
+    {% if request.status == "Pending" %}
+
+        <span class="badge bg-warning text-dark">
+
+            Pending
+
+        </span>
+
+    {% elif request.status == "Ready for Pickup" %}
+
+        <span class="badge bg-info">
+
+            Ready for Pickup
+
+        </span>
+
+    {% elif request.status == "Collected" %}
+
+        <span class="badge bg-success">
+
+            Collected
+
+        </span>
+
+    {% elif request.status == "Rejected" %}
+
+        <span class="badge bg-danger">
+
+            Rejected
+
+        </span>
+
+    {% endif %}
+
+</p>
+
+                {% if request.status == "Pending" %}
+
+<a
+    href="{% url 'approve_request' request.id %}"
+    class="btn btn-success">
+
+    ✅ Approve
+
+</a>
+
+<a
+    href="{% url 'reject_request' request.id %}"
+    class="btn btn-danger">
+
+    ❌ Reject
+
+</a>
+
+{% elif request.status == "Ready for Pickup" %}
+
+<a
+    href="{% url 'confirm_collection' request.id %}"
+    class="btn btn-primary">
+
+    📚 Confirm Collection
+
+</a>
+
+{% elif request.status == "Collected" %}
+
+<span class="badge bg-success fs-6">
+
+    ✅ Book Collected
+
+</span>
+
+{% elif request.status == "Rejected" %}
+
+<span class="badge bg-danger fs-6">
+
+    ❌ Rejected
+
+</span>
+
+{% endif %}
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="alert alert-success">
+
+            🎉 No pending requests.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

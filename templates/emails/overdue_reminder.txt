@@ -1,0 +1,28 @@
+MVTC Library
+
+Dear {{ member.get_full_name|default:member.username }},
+
+Our records show that the following book is overdue.
+
+Book Title:
+{{ book.title }}
+
+Author:
+{{ book.author }}
+
+Accession Number:
+{{ book.accession_number }}
+
+Issue Date:
+{{ transaction.issued_at|date:"d M Y" }}
+
+Due Date:
+{{ transaction.due_date|date:"d M Y" }}
+
+Please return the book as soon as possible.
+
+If you have already returned it, kindly ignore this email.
+
+Thank you.
+
+MVTC Library

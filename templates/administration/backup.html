@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+<div class="card shadow">
+
+<div class="card-header bg-dark text-white py-3">
+
+<h3>🗄 Database Backup</h3>
+
+</div>
+
+<div class="card-body">
+
+<div class="row mb-4">
+
+<div class="col-md-4">
+
+<div class="card border-primary">
+
+<div class="card-body text-center">
+
+<h6>Database Size</h6>
+
+<h4>{{ db_size }} MB</h4>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="card border-success">
+
+<div class="card-body text-center">
+
+<h6>Total Backups</h6>
+
+<h4>{{ backups|length }}</h4>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="card border-info">
+
+<div class="card-body text-center">
+
+<h6>Latest Backup</h6>
+
+{% if latest_backup %}
+
+<small>
+
+{{ latest_backup.created|date:"d M Y H:i" }}
+
+</small>
+
+{% else %}
+
+<small>No Backup</small>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<form method="post">
+
+{% csrf_token %}
+
+<button class="btn btn-success">
+
+➕ Create Backup
+
+</button>
+
+</form>
+
+<hr>
+
+<h4>Existing Backups</h4>
+
+{% if backups %}
+
+<table class="table table-bordered">
+
+<thead>
+
+<tr>
+
+<th>File</th>
+
+<th>Size</th>
+
+<th>Created</th>
+<th width="220">Actions</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for backup in backups %}
+
+<tr>
+
+<td>{{ backup.name }}</td>
+
+<td>{{ backup.size }} MB</td>
+
+<td>{{ backup.created|date:"d M Y H:i" }}</td>
+
+<td>
+
+<a href="{% url 'download_backup' backup.name %}"
+   class="btn btn-sm btn-primary">
+
+⬇ Download
+
+</a>
+
+<a href="{% url 'delete_backup' backup.name %}"
+   class="btn btn-sm btn-danger">
+
+🗑 Delete
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% else %}
+
+<div class="alert alert-warning">
+
+No backups available.
+
+</div>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

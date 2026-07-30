@@ -1,0 +1,150 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container mt-4">
+  <div class="card shadow">
+    <div class="card-header bg-dark text-white py-3">
+      <h3>Import Books</h3>
+    </div>
+
+    <div class="card-body">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %} {{ form.as_p }}
+
+        <button type="submit" class="btn btn-success">Upload Excel</button>
+      </form>
+
+      {% if preview %}
+
+      <hr />
+
+      {% if imported_file %}
+
+      <div class="alert alert-info">
+        <h5>📄 Uploaded File</h5>
+
+        <strong>File:</strong>
+        {{ imported_file.excel_file.name }}
+
+        <br />
+
+        <strong>Uploaded:</strong>
+        {{ imported_file.uploaded_at }}
+      </div>
+
+      {% endif %}
+
+      <h4>Import Summary</h4>
+
+      <div class="row mb-4">
+        <div class="col-md-3">
+          <div class="alert alert-primary">
+            <strong>Total Books</strong><br />
+            {{ preview.total }}
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="alert alert-success">
+            <strong>New Books</strong><br />
+            {{ preview.new_books }}
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="alert alert-warning">
+            <strong>Existing</strong><br />
+            {{ preview.existing_books }}
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="alert alert-info">
+            <strong>Duplicate Rows</strong><br />
+            {{ preview.duplicate_rows }}
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="alert alert-danger">
+            <strong>Invalid Rows</strong><br />
+            {{ preview.invalid_rows }}
+          </div>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead class="table-dark">
+            <tr>
+              <th>Accession Number</th>
+
+              <th>Title</th>
+
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for row in preview.results %}
+
+            <tr>
+              <td>{{ row.accession_number }}</td>
+
+              <td>{{ row.title }}</td>
+
+              <td>
+                {% if row.status == "New" %}
+
+                <span class="badge bg-success">New</span>
+
+                {% elif row.status == "Exists" %}
+
+                <span class="badge bg-secondary">Exists</span>
+
+                {% else %}
+
+                <span class="badge bg-danger">Duplicate</span>
+
+                {% endif %}
+              </td>
+            </tr>
+
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <hr />
+
+      {% if imported_file %}
+
+      <div class="text-end">
+        {% if preview.new_books > 0 %}
+
+        <form
+          method="post"
+          action="{% url 'perform_import' imported_file.id %}"
+        >
+          {% csrf_token %}
+
+          <button type="submit" class="btn btn-primary btn-lg">
+            📥 Import {{ preview.new_books }} New Books
+          </button>
+        </form>
+
+        {% else %}
+
+        <div class="alert alert-success text-start">
+          <h5 class="mb-2">✅ Nothing to Import</h5>
+
+          All books in this Excel file already exist in the library.
+        </div>
+
+        {% endif %}
+      </div>
+
+      {% endif %} {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

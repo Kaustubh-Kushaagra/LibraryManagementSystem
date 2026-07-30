@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white py-3">
+            <h3>{{ book.title }}</h3>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered">
+
+                <tr>
+                    <th>Accession Number</th>
+                    <td>{{ book.accession_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Serial Number</th>
+                    <td>{{ book.serial_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Author</th>
+                    <td>{{ book.author }}</td>
+                </tr>
+
+                <tr>
+                    <th>Publisher</th>
+                    <td>{{ book.publisher }}</td>
+                </tr>
+
+                <tr>
+                    <th>Category</th>
+                    <td>{{ book.category }}</td>
+                </tr>
+
+                <tr>
+                    <th>Publication Year</th>
+                    <td>{{ book.publication_year|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Pages</th>
+                    <td>{{ book.pages|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Volume Quantity</th>
+                    <td>{{ book.volume_qty }}</td>
+                </tr>
+
+                <tr>
+                    <th>Price</th>
+                    <td>
+                        {% if book.price %}
+                            ₹ {{ book.price }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Acquisition Type</th>
+                    <td>
+
+                        {% if book.acquisition_type == "Donation" %}
+
+                            <span class="badge bg-info text-dark">
+                                🎁 Donation
+                            </span>
+
+                        {% elif book.acquisition_type == "Purchase" %}
+
+                            <span class="badge bg-primary">
+                                💰 Purchase
+                            </span>
+
+                        {% elif book.acquisition_type == "Government" %}
+
+                            <span class="badge bg-success">
+                                🏛 Government
+                            </span>
+
+                        {% else %}
+
+                            {{ book.acquisition_type }}
+
+                        {% endif %}
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Acquired From</th>
+
+                    <td>
+
+                        {% if book.donor %}
+
+                            <strong>{{ book.donor.name }}</strong>
+
+                            {% if book.donor.designation %}
+                                <br>
+                                <small class="text-muted">
+                                    {{ book.donor.designation }}
+                                </small>
+                            {% endif %}
+
+                            {% if book.donor.employee_code %}
+                                <br>
+                                <small class="text-muted">
+                                    Employee Code : {{ book.donor.employee_code }}
+                                </small>
+                            {% endif %}
+
+                        {% else %}
+
+                            {{ book.source|default:"—" }}
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <th>Original Source Entry</th>
+                    <td>{{ book.source|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Location</th>
+                    <td>{{ book.location|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Date Added</th>
+                    <td>
+
+                        {% if book.date_added %}
+
+                            {{ book.date_added|date:"d M Y" }}
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Remarks</th>
+                    <td>{{ book.remarks|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Status</th>
+
+                    <td>
+
+                        {% if book.status == "Available" %}
+
+                            <span class="badge bg-success">
+                                Available
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-danger">
+                                {{ book.status }}
+                            </span>
+
+                            {% if overdue_days %}
+
+                                <br>
+
+                                <small class="text-danger fw-bold">
+                                    ⚠ {{ overdue_days }} day{{ overdue_days|pluralize }} overdue
+                                </small>
+
+                            {% else %}
+
+                                <br>
+
+                                <small class="text-success">
+                                    ✓ Within due date
+                                </small>
+
+                            {% endif %}
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% if active_transaction %}
+
+                <tr>
+                    <th>Issued To</th>
+
+                    <td>
+                        {{ active_transaction.member.get_full_name|default:active_transaction.member.username }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Issued On</th>
+
+                    <td>
+                        {{ active_transaction.issued_at|date:"d M Y" }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Due Date</th>
+
+                    <td>
+                        {{ active_transaction.due_date|date:"d M Y" }}
+                    </td>
+                </tr>
+
+                {% endif %}
+
+            </table>
+
+            {% if user.role == "member" %}
+
+            {% if book.status == "Available" %}
+
+                <a
+                    href="{% url 'request_book' book.accession_number %}"
+                    class="btn btn-primary">
+
+                    📚 Request Book
+
+                </a>
+
+            {% else %}
+
+                <button
+                    class="btn btn-secondary"
+                    disabled>
+
+                    Book Unavailable
+
+                </button>
+
+            {% endif %}
+
+        {% endif %}
+
+            {% if user.role == "librarian" %}
+
+                {% if book.status == "Available" %}
+
+                    <a
+                        href="{% url 'issue_book' book.accession_number %}"
+                        class="btn btn-success">
+
+                        📖 Issue Book
+
+                    </a>
+
+                {% elif active_transaction %}
+
+                    <a
+                        href="{% url 'return_book' active_transaction.id %}"
+                        class="btn btn-warning">
+
+                        🔄 Return Book
+
+                    </a>
+
+                {% else %}
+
+                    <button
+                        class="btn btn-danger"
+                        disabled>
+
+                        Book Already Issued
+
+                    </button>
+
+                {% endif %}
+
+            {% endif %}
+
+            {% if request.GET.next %}
+
+            <a
+                href="{{ request.GET.next }}"
+                class="btn btn-secondary">
+
+                ← Back to Catalog
+
+            </a>
+
+            {% else %}
+
+            <a
+                href="{% url 'catalog' %}"
+                class="btn btn-secondary">
+
+                ← Back to Catalog
+
+            </a>
+
+            {% endif %}
+
+            <hr class="my-4">
+
+            <h4>📜 Book History</h4>
+
+            {% if history %}
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Member</th>
+
+                            <th>Issued On</th>
+
+                            <th>Due Date</th>
+
+                            <th>Returned On</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for transaction in history %}
+
+                        <tr>
+
+                            <td>
+                                {{ transaction.member.get_full_name|default:transaction.member.username }}
+                            </td>
+
+                            <td>
+                                {{ transaction.issued_at|date:"d M Y" }}
+                            </td>
+
+                            <td>
+                                {{ transaction.due_date|date:"d M Y" }}
+                            </td>
+
+                            <td>
+
+                                {% if transaction.returned_at %}
+
+                                    {{ transaction.returned_at|date:"d M Y" }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                {% if transaction.status == "Returned" %}
+
+                                    <span class="badge bg-success">
+                                        ✅ Returned
+                                    </span>
+
+                                {% elif transaction.overdue_days > 0 %}
+
+                                    <span class="badge bg-danger">
+                                        🔴 {{ transaction.overdue_days }} Day{{ transaction.overdue_days|pluralize }} Overdue
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge bg-warning text-dark">
+                                        📖 Issued
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+                <p class="text-muted">
+                    No transaction history available.
+                </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

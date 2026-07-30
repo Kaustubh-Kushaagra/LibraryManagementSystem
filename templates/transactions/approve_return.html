@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}
+Approve Return
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white py-3">
+
+            <h3>
+
+                📦 Approve Return Request
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <h4>
+
+                {{ transaction.book.title }}
+
+            </h4>
+
+            <hr>
+
+            <p>
+
+                <strong>Accession Number:</strong>
+
+                {{ transaction.book.accession_number }}
+
+            </p>
+
+            <p>
+
+                <strong>Member:</strong>
+
+                {{ transaction.member.get_full_name|default:transaction.member.username }}
+
+            </p>
+
+            <p>
+
+                <strong>Return Requested On:</strong>
+
+                {{ transaction.return_requested_at|date:"d M Y H:i" }}
+
+            </p>
+
+            <hr>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Return Date
+
+                    </label>
+
+                    {{ form.return_date }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Return Time
+
+                    </label>
+
+                    {{ form.return_time }}
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Message
+
+                    </label>
+
+                    {{ form.librarian_message }}
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    Approve & Notify
+
+                </button>
+
+                <a
+                    href="{% url 'pending_returns' %}"
+                    class="btn btn-outline-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+
+flatpickr(".flatpickr-date", {
+
+    dateFormat: "Y-m-d",
+
+    minDate: "today",
+
+});
+
+flatpickr(".flatpickr-time", {
+
+    enableTime: true,
+
+    noCalendar: true,
+
+    dateFormat: "h:i K",
+
+    altInput: true,
+
+    altFormat: "h:i K",
+
+    time_24hr: false,
+
+});
+
+</script>
+
+{% endblock %}

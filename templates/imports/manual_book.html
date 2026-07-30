@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+Add Single Book
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white py-3">
+
+            <h3>✍️ Add Single Book</h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                <div class="mt-3">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+                        Save Book
+                    </button>
+
+                    <a
+                        href="{% url 'import_home' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

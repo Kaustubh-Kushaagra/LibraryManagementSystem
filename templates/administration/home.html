@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2 class="mb-4">
+        ⚙ Administration
+    </h2>
+
+    <div class="row g-4">
+
+        <!-- Database Backup -->
+        <div class="col-md-6">
+
+            <div class="card shadow h-100">
+
+                <div class="card-body">
+
+                    <h4>🗄 Database Backup</h4>
+
+                    <p class="text-muted">
+                        Create and download database backups.
+                    </p>
+
+                    <a href="{% url 'backup_database' %}"
+                       class="btn btn-primary">
+
+                        Open
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+    <div class="card shadow h-100">
+
+        <div class="card-body">
+
+            <h4>
+                📚 Pending Requests
+            </h4>
+
+            <p class="text-muted">
+                Review member book requests.
+            </p>
+
+            <a href="{% url 'pending_requests' %}"
+               class="btn btn-primary">
+
+                Open
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+        <!-- Email Reminders -->
+        <div class="col-md-6">
+
+            <div class="card shadow h-100">
+
+                <div class="card-body">
+
+                    <h4>📧 Email Reminders</h4>
+
+                    <p class="text-muted">
+                        Generate reminder emails for members.
+                    </p>
+
+                    <div class="d-grid gap-2">
+
+                        <a href="{% url 'send_due_reminders' %}"
+                           class="btn btn-success">
+
+                            📅 Send Due Reminders
+
+                        </a>
+
+                        <a href="{% url 'send_overdue_reminders' %}"
+                           class="btn btn-danger">
+
+                            🚨 Send Overdue Reminders
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+
+    <div class="card shadow h-100">
+
+        <div class="card-body">
+
+            <h4>
+                💡 Book Recommendations
+            </h4>
+
+            <p class="text-muted">
+                Review and manage member book recommendations.
+            </p>
+
+            <a href="{% url 'recommendation_list' %}"
+               class="btn btn-primary">
+
+                Open
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-md-6">
+
+    <div class="card shadow h-100">
+
+        <div class="card-body">
+
+            <h4>
+                📖 Manage Transactions
+            </h4>
+
+            <p class="text-muted">
+                View all issued and returned books and process returns.
+            </p>
+
+            <a href="{% url 'manage_transactions' %}"
+               class="btn btn-primary">
+
+                Open
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-md-6">
+
+    <div class="card shadow h-100">
+
+        <div class="card-body">
+
+            <h4>
+                📦 Pending Returns
+            </h4>
+
+            <p class="text-muted">
+                Review member return requests.
+            </p>
+
+            <a href="{% url 'pending_returns' %}"
+               class="btn btn-primary">
+
+                Open
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+    </div>
+
+</div>
+
+{% endblock %}

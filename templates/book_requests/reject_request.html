@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+Reject Book Request
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-danger text-white">
+
+            <h3 class="mb-0">
+                ❌ Reject Book Request
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered">
+
+                <tr>
+                    <th style="width:25%;">Book</th>
+                    <td>
+                        {{ book_request.book.title }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Accession Number</th>
+                    <td>
+                        {{ book_request.book.accession_number }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Member</th>
+                    <td>
+                        {{ book_request.member.get_full_name|default:book_request.member.username }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Requested On</th>
+                    <td>
+                        {{ book_request.requested_at|date:"d M Y H:i" }}
+                    </td>
+                </tr>
+
+            </table>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="mb-3">
+
+                    <label class="form-label fw-bold">
+
+                        Reason for rejection
+
+                    </label>
+
+                    {{ form.rejection_reason }}
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-danger">
+
+                    ❌ Reject & Notify
+
+                </button>
+
+                <a
+                    href="{% url 'pending_requests' %}"
+                    class="btn btn-outline-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

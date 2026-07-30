@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}
+My Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card shadow">
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-3 text-center">
+
+                    {% if user.profile_picture %}
+
+                        <img
+                            src="{{ user.profile_picture.url }}"
+                            class="img-fluid rounded-circle border"
+                            style="width:180px;height:180px;object-fit:cover;"
+                        >
+
+                    {% else %}
+
+                        <div
+                            class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center mx-auto"
+                            style="width:180px;height:180px;font-size:70px;"
+                        >
+                            👤
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+                <div class="col-md-9">
+
+                    <h2>
+
+                        {{ user.get_full_name|default:user.username }}
+
+                    </h2>
+
+                    <hr>
+
+                    <p><strong>Username:</strong> {{ user.username }}</p>
+
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+
+                    <p><strong>Role:</strong> {{ user.get_role_display }}</p>
+
+                    {% if user.employee_id %}
+                        <p><strong>Employee ID:</strong> {{ user.employee_id }}</p>
+                    {% endif %}
+
+                    {% if user.department %}
+                        <p><strong>Department:</strong> {{ user.department }}</p>
+                    {% endif %}
+
+                    {% if user.designation %}
+                        <p><strong>Designation:</strong> {{ user.designation }}</p>
+                    {% endif %}
+
+                    {% if user.phone %}
+                        <p><strong>Phone:</strong> {{ user.phone }}</p>
+                    {% endif %}
+
+                    {% if user.address %}
+                        <p><strong>Address:</strong> {{ user.address }}</p>
+                    {% endif %}
+
+                </div>
+                <hr>
+
+<div class="d-flex gap-2">
+    <a
+        href="{% url 'edit_profile' %}"
+        class="btn btn-primary"
+    >
+        ✏ Edit Profile
+    </a>
+
+    <a
+        href="{% url 'change_password' %}"
+        class="btn btn-warning"
+    >
+        🔑 Change Password
+    </a>
+</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}
+Confirm Collection
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white py-3">
+
+            <h3 class="mb-0">
+
+                📚 Confirm Book Collection
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <p>
+
+                <strong>Member:</strong>
+
+                {{ book_request.member.get_full_name|default:book_request.member.username }}
+
+            </p>
+
+            <p>
+
+                <strong>Book:</strong>
+
+                {{ book_request.book.title }}
+
+            </p>
+
+            <p>
+
+                <strong>Accession Number:</strong>
+
+                {{ book_request.book.accession_number }}
+
+            </p>
+
+            <p>
+
+                <strong>Pickup Date:</strong>
+
+                {{ book_request.pickup_date|date:"d M Y" }}
+
+            </p>
+
+            <p>
+
+                <strong>Pickup Time:</strong>
+
+                {{ book_request.pickup_time|time:"h:i A" }}
+
+            </p>
+
+            <hr>
+
+            <div class="alert alert-warning">
+
+                Once confirmed:
+
+                <ul class="mb-0">
+                    <li>The book will become <strong>Issued</strong>.</li>
+                    <li>A transaction will be created.</li>
+                    <li>The request will be marked as <strong>Collected</strong>.</li>
+                </ul>
+
+            </div>
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <button class="btn btn-success">
+
+                    📚 Confirm Collection
+
+                </button>
+
+                <a
+                    href="{% url 'pending_requests' %}"
+                    class="btn btn-outline-secondary">
+
+                    Cancel
+
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

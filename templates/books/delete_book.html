@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+Delete Book
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-6">
+
+            <div class="card border-danger shadow">
+
+                <div class="card-header bg-danger text-white">
+
+                    <h3 class="mb-0">
+                        🗑 Delete Book
+                    </h3>
+
+                </div>
+
+                <div class="card-body">
+
+                    <div class="alert alert-warning">
+
+                        <h5>
+                            Are you sure?
+                        </h5>
+
+                        This action cannot be undone.
+
+                    </div>
+
+                    <table class="table">
+
+                        <tr>
+                            <th>Accession Number</th>
+                            <td>{{ book.accession_number }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Title</th>
+                            <td>{{ book.title }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Author</th>
+                            <td>{{ book.author }}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Category</th>
+                            <td>{{ book.category }}</td>
+                        </tr>
+
+                    </table>
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <div class="d-flex justify-content-between">
+
+                            <a
+                                href="{% url 'book_detail' book.accession_number %}"
+                                class="btn btn-outline-secondary"
+                            >
+                                ← Cancel
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-danger"
+                            >
+                                🗑 Delete Book
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

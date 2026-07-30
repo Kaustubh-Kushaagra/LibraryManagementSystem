@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}
+Recommendation Details
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="card shadow-lg">
+
+        <div class="card-header bg-dark text-white py-3">
+
+            <h3>
+
+                📚 Recommendation Details
+
+            </h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-bordered">
+
+                <tr>
+                    <th width="30%">Book Title</th>
+                    <td>{{ recommendation.title }}</td>
+                </tr>
+
+                <tr>
+                    <th>Author</th>
+                    <td>{{ recommendation.author }}</td>
+                </tr>
+
+                <tr>
+                    <th>Publisher</th>
+                    <td>{{ recommendation.publisher|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>ISBN</th>
+                    <td>{{ recommendation.isbn|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Edition</th>
+                    <td>{{ recommendation.edition|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Category</th>
+                    <td>{{ recommendation.category|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Language</th>
+                    <td>{{ recommendation.language|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Approximate Price</th>
+                    <td>{{ recommendation.approximate_price|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Reason</th>
+                    <td>{{ recommendation.reason|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Requested By</th>
+                    <td>
+
+                        {{ recommendation.member.get_full_name|default:recommendation.member.username }}
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Requested On</th>
+                    <td>
+
+                        {{ recommendation.requested_at|date:"d M Y H:i" }}
+
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Status</th>
+                    <td>
+
+                        {{ recommendation.status }}
+
+                    </td>
+                </tr>
+
+            </table>
+
+            <div class="mt-4">
+
+                {% if recommendation.status == "Pending" %}
+
+<a
+    href="{% url 'approve_recommendation' recommendation.id %}"
+    class="btn btn-success"
+>
+    ✅ Approve
+</a>
+
+<a
+    href="{% url 'reject_recommendation' recommendation.id %}"
+    class="btn btn-danger"
+>
+    ❌ Reject
+</a>
+
+{% else %}
+
+<div class="alert alert-success">
+
+    This recommendation has already been reviewed.
+
+</div>
+
+{% endif %}
+
+                <a
+                    href="{% url 'recommendation_list' %}"
+                    class="btn btn-secondary"
+                >
+
+                    Back
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

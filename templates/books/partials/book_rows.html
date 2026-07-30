@@ -1,0 +1,128 @@
+{% for book in books %}
+
+                <tr>
+
+                    <td>{{ book.accession_number }}</td>
+
+                    <td>
+
+                        <a
+                            href="{% url 'book_detail' book.accession_number %}?next={{ next_url|urlencode }}"
+                            class="text-decoration-none fw-semibold"
+                        >
+
+                            {{ book.title }}
+
+                        </a>
+
+                    </td>
+
+                    <td>{{ book.author }}</td>
+
+                    <td>{{ book.category }}</td>
+
+                    <td>
+
+                        {% if book.donor %}
+
+                            <span class="badge bg-info text-dark">
+
+                                🎁 {{ book.donor.name }}
+
+                            </span>
+
+                        {% elif book.acquisition_type == "Purchase" %}
+
+                            <span class="badge bg-primary">
+
+                                💰 Purchase
+
+                            </span>
+
+                        {% elif book.acquisition_type == "Government" %}
+
+                            <span class="badge bg-success">
+
+                                🏛 Government
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+
+                                {{ book.acquisition_type }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    
+
+                    <td>
+
+                        {% if book.status == "Available" %}
+
+                            <span class="badge bg-success">
+                                Available
+                            </span>
+
+                        {% elif book.status == "Issued" %}
+
+                            <span class="badge bg-danger">
+                                Issued
+                            </span>
+
+                        {% elif book.status == "Maintenance" %}
+
+                            <span class="badge bg-warning text-dark">
+                                Maintenance
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge bg-secondary">
+                                {{ book.status }}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td class="text-center">
+
+                        <a
+                            href="{% url 'book_detail' book.accession_number %}?next={{ next_url|urlencode }}"
+                            class="btn btn-sm btn-outline-primary"
+                            title="View"
+                        >
+                            👁
+                        </a>
+
+                        {% if user.role == "librarian" %}
+
+                        <a
+                            href="{% url 'edit_book' book.accession_number %}"
+                            class="btn btn-sm btn-outline-warning"
+                            title="Edit"
+                        >
+                            ✏️
+                        </a>
+
+                        <a
+                            href="{% url 'delete_book' book.accession_number %}"
+                            class="btn btn-sm btn-outline-danger"
+                            title="Delete"
+                        >
+                            🗑
+                        </a>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}

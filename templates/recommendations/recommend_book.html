@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}
+Recommend a New Book
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow-lg">
+
+                <div class="card-header bg-dark text-white py-3">
+
+                    <h3 class="mb-0">
+
+                        📚 Recommend a New Book
+
+                    </h3>
+
+                </div>
+
+                <div class="card-body">
+
+                    <p class="text-muted">
+
+                        Can't find a book in our catalog?
+
+                        Recommend it here and the librarian will review your suggestion.
+
+                    </p>
+
+                    <div class="alert alert-info">
+
+                        <strong>Information</strong>
+
+                        <br>
+
+                        Book Title and Author are required.
+
+                        All other details are optional but help the librarian identify the correct book.
+
+                    </div>
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Book Title
+
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            {{ form.title }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+
+                                Author
+
+                                <span class="text-danger">*</span>
+
+                            </label>
+
+                            {{ form.author }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.publisher.label_tag }}
+
+                            {{ form.publisher }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.isbn.label_tag }}
+
+                            {{ form.isbn }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.edition.label_tag }}
+
+                            {{ form.edition }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.category.label_tag }}
+
+                            {{ form.category }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.language.label_tag }}
+
+                            {{ form.language }}
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            {{ form.approximate_price.label_tag }}
+
+                            {{ form.approximate_price }}
+
+                        </div>
+
+                        <div class="mb-4">
+
+                            {{ form.reason.label_tag }}
+
+                            {{ form.reason }}
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary btn-lg"
+                        >
+
+                            📩 Submit Recommendation
+
+                        </button>
+
+                        <a
+                            href="{% url 'catalog' %}"
+                            class="btn btn-outline-secondary btn-lg"
+                        >
+
+                            Cancel
+
+                        </a>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

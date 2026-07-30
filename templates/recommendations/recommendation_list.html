@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}
+Book Recommendations
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h2 class="mb-4">
+
+        📚 Book Recommendations
+
+    </h2>
+
+    <div class="table-responsive">
+
+        <table class="table table-hover table-bordered">
+
+            <thead class="table-dark">
+
+                <tr>
+
+                    <th>Member</th>
+
+                    <th>Book</th>
+
+                    <th>Author</th>
+
+                    <th>Status</th>
+
+                    <th>Requested</th>
+
+                    <th></th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for recommendation in recommendations %}
+
+                <tr>
+
+                    <td>
+
+                        {{ recommendation.member.get_full_name|default:recommendation.member.username }}
+
+                    </td>
+
+                    <td>
+
+                        {{ recommendation.title }}
+
+                    </td>
+
+                    <td>
+
+                        {{ recommendation.author }}
+
+                    </td>
+
+                    <td>
+
+                        {{ recommendation.status }}
+
+                    </td>
+
+                    <td>
+
+                        {{ recommendation.requested_at|date:"d M Y" }}
+
+                    </td>
+
+                    <td>
+
+                        <a
+                            href="{% url 'recommendation_detail' recommendation.id %}"
+                            class="btn btn-primary btn-sm"
+                        >
+
+                            View
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="6" class="text-center">
+
+                        No recommendations yet.
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

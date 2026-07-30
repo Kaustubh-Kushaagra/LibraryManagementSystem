@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h3 class="mb-0">
+                    📦 Pending Return Requests
+                </h3>
+
+                <span class="badge bg-light text-dark">
+
+                    {{ transactions|length }} Pending
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if transactions %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Member</th>
+
+                            <th>Book</th>
+
+                            <th>Requested On</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for transaction in transactions %}
+
+                        <tr>
+
+                            <td>
+
+                                {{ transaction.member.get_full_name|default:transaction.member.username }}
+
+                            </td>
+
+                            <td>
+
+                                <strong>
+
+                                    {{ transaction.book.title }}
+
+                                </strong>
+
+                                <br>
+
+                                <small class="text-muted">
+
+                                    {{ transaction.book.accession_number }}
+
+                                </small>
+
+                            </td>
+
+                            <td>
+
+                                {{ transaction.return_requested_at|date:"d M Y H:i" }}
+
+                            </td>
+
+                            <td>
+
+                                <a href="{% url 'approve_return' transaction.id %}"
+                                    class="btn btn-primary">
+
+                                        📅 Schedule Return
+
+                                    </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="alert alert-info mb-0">
+
+                🎉 No pending return requests.
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

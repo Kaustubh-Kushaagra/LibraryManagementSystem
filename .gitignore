@@ -1,0 +1,27 @@
+# Environment secrets
+.env
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Django database
+db.sqlite3
+
+# User uploaded files
+media/
+
+# Django generated files
+*.log
+
+# IDE files
+.vscode/
+.idea/
+
+# Database backups
+backups/

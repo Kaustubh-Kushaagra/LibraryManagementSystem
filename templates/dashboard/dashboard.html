@@ -1,0 +1,831 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h2>
+            👋 Welcome,
+            {{ user.first_name|default:user.username }}
+        </h2>
+
+        <p class="text-muted">
+            MVTC Library Management System
+        </p>
+    </div>
+
+{% if user.role == "librarian" %}
+
+<!-- Statistics -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-3">
+        <div class="card dashboard-card shadow-sm border-0 text-center">
+            <div class="card-body">
+                <h1>📚</h1>
+                <h3>{{ total_books }}</h3>
+                <small>Total Books</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card dashboard-card shadow-sm border-0 text-center">
+            <div class="card-body">
+                <h1>✅</h1>
+                <h3>{{ available_books }}</h3>
+                <small>Available Books</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card dashboard-card shadow-sm border-0 text-center">
+            <div class="card-body">
+                <h1>📖</h1>
+                <h3>{{ issued_books }}</h3>
+                <small>Issued Books</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card dashboard-card shadow-sm border-0 text-center">
+            <div class="card-body">
+                <h1>⚠️</h1>
+                <h3>{{ overdue_books }}</h3>
+                <small>Overdue Books</small>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Members + Quick Actions -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-lg-6">
+
+        <div class="card dashboard-card shadow-sm border-0 text-center">
+
+            <div class="card-header bg-dark text-white py-3">
+                👥 Members
+            </div>
+
+            <div class="card-body p-0 d-flex flex-column">
+
+                <h2>{{ total_members }}</h2>
+
+                <p class="text-muted">
+                    Registered Members
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+
+        <div class="card dashboard-card shadow-sm border-0 text-center">
+
+            <div class="card-header bg-dark text-white py-3">
+                ⚡ Quick Actions
+            </div>
+
+            <div class="card-body d-grid gap-2">
+
+                <a href="{% url 'catalog' %}"
+                   class="btn btn-outline-primary">
+
+                    📚 Browse Catalog
+
+                </a>
+
+                <a href="{% url 'member_list' %}"
+                   class="btn btn-outline-success">
+
+                    👥 Members
+
+                </a>
+
+                <a href="{% url 'import_home' %}"
+                   class="btn btn-outline-secondary">
+
+                    📥 Import Books
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Recent Books + Transactions -->
+
+<div class="row g-4 mb-4">
+
+    <div class="col-lg-6">
+
+        <div class="card dashboard-card shadow-sm border-0 text-center h-100">
+
+            <div class="card-header bg-dark text-white py-3">
+
+                📚 Recently Added Books
+
+            </div>
+
+            <div class="card-body p-0 d-flex flex-column">
+
+                <ul class="list-group list-group-flush">
+
+                    {% for book in recent_books %}
+
+                    <li class="list-group-item">
+
+                        <div class="fw-semibold">
+
+    {{ book.title }}
+
+</div>
+
+<small class="text-muted">
+
+    {{ book.author }}
+
+</small>
+
+                    </li>
+
+                    {% empty %}
+
+                    <li class="list-group-item">
+
+                        No books found.
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-6">
+
+        <div class="card dashboard-card shadow-sm border-0 text-center h-100">
+
+            <div class="card-header bg-dark text-white py-3">
+
+                🔄 Recent Transactions
+
+            </div>
+
+            <div class="card-body p-0 d-flex flex-column">
+
+                <ul class="list-group list-group-flush">
+
+                    {% for transaction in recent_transactions %}
+
+                    <li class="list-group-item">
+
+                        <div class="fw-semibold">
+
+    {{ transaction.book.title }}
+
+</div>
+
+<div>
+
+    {{ transaction.member.get_full_name|default:transaction.member.username }}
+
+</div>
+
+<small class="text-muted">
+
+    {{ transaction.issued_at|date:"d M Y • h:i A" }}
+
+</small>
+
+                    </li>
+
+                    {% empty %}
+
+                    <li class="list-group-item">
+
+                        No recent transactions.
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+        </div>
+
+        
+
+    </div>
+
+</div>
+
+<div class="card dashboard-card shadow-sm border-0 text-center mt-4">
+
+    <div class="card-header bg-dark text-white py-3">
+
+        <h5 class="mb-0 fw-semibold">
+            🏆 Top 5 Most Borrowed Books
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if top_books %}
+
+        <table class="table table-hover">
+
+            <thead>
+
+                <tr>
+
+                    <th>Book</th>
+
+                    <th>Author</th>
+
+                    <th class="text-center">
+                        Times Issued
+                    </th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for book in top_books %}
+
+                <tr>
+
+                    <td>
+
+                        {{ book.title }}
+
+                    </td>
+
+                    <td>
+
+                        {{ book.author }}
+
+                    </td>
+
+                    <td class="text-center">
+
+                        <span class="badge bg-primary">
+
+                            {{ book.times_issued }}
+
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+            <p class="text-muted">
+
+                No borrowing history available.
+
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="card dashboard-card shadow-sm border-0 text-center mt-4">
+
+    <div class="card-header bg-dark text-white py-3">
+
+        <h5 class="mb-0">
+            📅 This Month
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row text-center">
+
+            <div class="col-md-3">
+
+                <h3 class="text-primary">
+
+                    {{ books_issued_this_month }}
+
+                </h3>
+
+                <p>📖 Books Issued</p>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <h3 class="text-success">
+
+                    {{ books_returned_this_month }}
+
+                </h3>
+
+                <p>🔄 Books Returned</p>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <h3 class="text-warning">
+
+                    {{ books_added_this_month }}
+
+                </h3>
+
+                <p>📚 New Books</p>
+
+            </div>
+
+            <div class="col-md-3">
+
+                <h3 class="text-danger">
+
+                    {{ overdue_books }}
+
+                </h3>
+
+                <p>⚠ Overdue Books</p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Recent Activity -->
+
+<div class="card dashboard-card shadow-sm border-0 mt-4">
+
+    <div class="card-header bg-dark text-white py-3">
+
+        🕒 Recent Activity
+
+    </div>
+
+    <div class="card-body">
+
+        {% if recent_activity %}
+
+        <div class="list-group list-group-flush">
+
+            {% for log in recent_activity %}
+
+            <div class="list-group-item">
+
+                <div class="d-flex justify-content-between">
+
+                    <div class="fw-semibold">
+                        👤 {{ log.user.get_full_name|default:log.user.username|default:"System" }}
+                    </div>
+
+                    <small class="text-muted small">
+
+                        {{ log.timestamp|date:"d M Y • h:i A" }}
+
+                    </small>
+
+                </div>
+
+                <div class="mt-2 mb-2">
+
+                    {% if log.action == "Issue Book" %}
+
+<span class="badge bg-success">
+    📖 Issue Book
+</span>
+
+{% elif log.action == "Return Book" %}
+
+<span class="badge bg-warning text-dark">
+    🔄 Return Book
+</span>
+
+{% elif log.action == "Edit Book" %}
+
+<span class="badge bg-info text-dark">
+    ✏️ Edit Book
+</span>
+
+{% elif log.action == "Delete Book" %}
+
+<span class="badge bg-danger">
+    🗑 Delete Book
+</span>
+
+{% elif log.action == "Import Books" %}
+
+<span class="badge bg-secondary">
+    📥 Import Books
+</span>
+
+{% else %}
+
+<span class="badge bg-primary">
+    {{ log.action }}
+</span>
+
+{% endif %}
+
+
+                </div>
+                
+
+                {% if log.details %}
+                
+
+                <div class="mt-2 text-muted small">
+
+                    {{ log.details }}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% else %}
+
+        <p class="text-muted mb-0">
+
+            No recent activity available.
+
+        </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+
+
+{% else %}
+
+<!-- MEMBER DASHBOARD -->
+
+
+<div class="container py-4">
+
+    
+    <div class="row g-4">
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card shadow-sm border-0 text-center">
+
+                <div class="card-body">
+
+                    <h3 class="text-primary">
+
+                        {{ issued_count }}
+
+                    </h3>
+
+                    <h6>
+
+                        📚 Books Issued
+
+                    </h6>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card shadow-sm border-0 text-center">
+
+                <div class="card-body">
+
+                    <h3 class="text-primary">
+
+                        {{ pending_pickup_count }}
+
+                    </h3>
+
+                    <h6>
+
+                        📦 Ready for Pickup
+
+                    </h6>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card shadow-sm border-0 text-center">
+
+                <div class="card-body">
+
+                    <h3 class="text-warning">
+
+                        {{ pending_count }}
+
+                    </h3>
+
+                    <h6>
+
+                        📩 Pending Requests
+
+                    </h6>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card shadow-sm border-0 text-center">
+
+                <div class="card-body">
+
+                    <h3 class="text-success">
+
+                        {{ approved_count }}
+
+                    </h3>
+
+                    <h6>
+
+                        ✅ Approved
+
+                    </h6>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-3">
+
+            <div class="card dashboard-card shadow-sm border-0 text-center">
+
+                <div class="card-body">
+
+                    <h3 class="text-danger">
+
+                        {{ rejected_count }}
+
+                    </h3>
+
+                    <h6>
+
+                        ❌ Rejected
+
+                    </h6>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<hr class="my-5">
+
+<div class="card shadow">
+
+    <div class="card-header bg-dark text-white py-3">
+
+        <h4 class="mb-0">
+
+            📩 Recent Book Requests
+
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if recent_requests %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Book</th>
+
+                        <th>Status</th>
+
+                        <th>Requested</th>
+
+                        <th>Pickup</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for request in recent_requests %}
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+
+                                {{ request.book.title }}
+
+                            </strong>
+
+                            <br>
+
+                            <small class="text-muted">
+
+                                {{ request.book.accession_number }}
+
+                            </small>
+
+                        </td>
+
+                        <td>
+
+                            {% if request.status == "Pending" %}
+
+                                <span class="badge bg-warning text-dark">
+
+                                    Pending
+
+                                </span>
+
+                            {% elif request.status == "Approved" %}
+
+                                <span class="badge bg-success">
+
+                                    Approved
+
+                                </span>
+
+                            {% elif request.status == "Rejected" %}
+
+                                <span class="badge bg-danger">
+
+                                    Rejected
+
+                                </span>
+
+                            {% elif request.status == "Collected" %}
+
+                                <span class="badge bg-primary">
+
+                                    Collected
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary">
+
+                                    {{ request.status }}
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {{ request.requested_at|date:"d M Y" }}
+
+                        </td>
+
+                        <td>
+
+                            {% if request.pickup_date %}
+
+                                {{ request.pickup_date|date:"d M Y" }}
+
+                                <br>
+
+                                <small>
+
+                                    {{ request.pickup_time|time:"h:i A" }}
+
+                                </small>
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% if request.status == "Rejected" and request.librarian_message %}
+
+                    <tr>
+
+                        <td colspan="4">
+
+                            <div class="alert alert-danger mb-0">
+
+                                <strong>
+
+                                    Reason:
+
+                                </strong>
+
+                                {{ request.librarian_message }}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+            <div class="alert alert-info mb-0">
+
+                You haven't requested any books yet.
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+{% endif %}
+
+</div>
+
+{% endblock %}
