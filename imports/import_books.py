@@ -2,7 +2,7 @@ from openpyxl import load_workbook
 import re
 
 from donors.models import Donor
-
+from .constants import COLUMN_ALIASES
 from .utils import get_value
 
 from books.models import (
@@ -32,11 +32,14 @@ def import_books(excel_file):
         for h in rows[0]
     ]
 
+    print(headers)
+
     header_map = {
         header: index
         for index, header in enumerate(headers)
     }
     print(headers)
+    print(header_map.keys())
 
     general_category, _ = Category.objects.get_or_create(
         name="General"
@@ -173,9 +176,40 @@ def import_books(excel_file):
                 donor.employee_code = employee
                 donor.save()
 
+        category_name = str(
+            get_value(
+                row_data,
+                "category",
+            ) or ""
+        ).strip()
+
+        if category_name:
+
+            category, _ = Category.objects.get_or_create(
+                name=category_name,
+            )
+
+        else:
+
+            category = general_category
+
+        print("ROW DATA KEYS:")
+        for key in row_data.keys():
+            print(repr(key))
+
+        print("PRICE ALIASES:", COLUMN_ALIASES["price"])
+
+
+        print("PRICE FROM EXCEL:", repr(get_value(row_data, "price")))        
+
         LibraryItem.objects.create(
 
             accession_number=accession,
+
+            date_added=get_value(
+                row_data,
+                "date_added",
+            ),
 
             serial_number=get_value(
                 row_data,
@@ -188,7 +222,7 @@ def import_books(excel_file):
 
             publisher=publisher,
 
-            category=general_category,
+            category=category,
 
             publication_year=get_value(
                 row_data,
@@ -200,10 +234,7 @@ def import_books(excel_file):
                 "pages",
             ),
 
-            price=get_value(
-                row_data,
-                "price",
-            ),
+            price=row_data["Rate in Rs."],
 
             volume_qty=(
                 get_value(

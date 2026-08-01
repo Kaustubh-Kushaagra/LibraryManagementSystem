@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}
+User Management
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white">
+
+            <h3 class="mb-0">
+                👑 User Management
+            </h3>
+
+        </div>
+
+        <div class="card-body p-0">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>Username</th>
+
+                        <th>Name</th>
+
+                        <th>Email</th>
+
+                        <th>Role</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for user in users %}
+
+                    <tr>
+
+                        <td>
+
+                            {{ user.username }}
+
+                        </td>
+
+                        <td>
+
+                            {{ user.get_full_name|default:"-" }}
+
+                        </td>
+
+                        <td>
+
+                            {{ user.email|default:"-" }}
+
+                        </td>
+
+                        <td>
+
+    {% if user == request.user %}
+
+        <span class="badge bg-primary">
+
+            {{ user.get_role_display }}
+
+        </span>
+
+        <small class="text-muted d-block">
+
+            (You)
+
+        </small>
+
+    {% else %}
+
+        <select
+            class="form-select form-select-sm"
+            name="role_{{ user.id }}">
+
+            {% for value,label in roles %}
+
+                <option
+                    value="{{ value }}"
+                    {% if user.role == value %}selected{% endif %}>
+
+                    {{ label }}
+
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    {% endif %}
+
+</td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td colspan="4" class="text-center py-4">
+
+                            No users found.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+<div class="card-footer text-end">
+
+    <button
+        type="submit"
+        class="btn btn-success">
+
+        💾 Save Changes
+
+    </button>
+
+</div>
+
+</form>
+{% endblock %}

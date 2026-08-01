@@ -25,3 +25,6 @@ media/
 
 # Database backups
 backups/
+
+# Collected static files
+staticfiles/

@@ -5,7 +5,7 @@ from django.urls import reverse
 from .forms import BookRecommendationForm
 from notifications.helpers import create_notification
 from django.contrib.auth import get_user_model
-from django.contrib.admin.views.decorators import staff_member_required
+from accounts.decorators import library_helper_required, head_librarian_required
 from .models import BookRecommendation
 from django.utils import timezone
 
@@ -61,7 +61,7 @@ def recommend_book(request):
         },
     )
 
-@staff_member_required
+@library_helper_required
 def recommendation_list(request):
 
     recommendations = (
@@ -78,7 +78,7 @@ def recommendation_list(request):
         },
     )
 
-@staff_member_required
+@library_helper_required
 def recommendation_detail(request, pk):
 
     recommendation = get_object_or_404(
@@ -94,7 +94,7 @@ def recommendation_detail(request, pk):
         },
     )
 
-@staff_member_required
+@head_librarian_required
 def approve_recommendation(request, pk):
 
     recommendation = get_object_or_404(
@@ -143,7 +143,7 @@ def approve_recommendation(request, pk):
 
     return redirect("recommendation_list")
 
-@staff_member_required
+@head_librarian_required
 def reject_recommendation(request, pk):
 
     recommendation = get_object_or_404(

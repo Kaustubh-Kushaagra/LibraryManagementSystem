@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from accounts.decorators import librarian_required
+from accounts.decorators import library_helper_required, head_librarian_required
 from django.contrib import messages
 
 from audit.models import AuditLog
@@ -17,7 +17,7 @@ from books.models import LibraryItem
 
 
 @login_required
-@librarian_required
+@head_librarian_required
 def upload_excel(request):
 
     if request.method == "POST":
@@ -52,7 +52,7 @@ def upload_excel(request):
 
 
 @login_required
-@librarian_required
+@head_librarian_required
 def preview_import(request, import_id):
 
     imported_file = get_object_or_404(
@@ -80,7 +80,7 @@ def preview_import(request, import_id):
 
 
 @login_required
-@librarian_required
+@head_librarian_required
 def perform_import(request, import_id):
 
     imported_file = get_object_or_404(
@@ -126,7 +126,7 @@ def perform_import(request, import_id):
     return redirect("upload_excel")
 
 @login_required
-@librarian_required
+@library_helper_required
 def import_home(request):
 
     return render(
@@ -135,14 +135,19 @@ def import_home(request):
     )
 
 @login_required
-@librarian_required
+@library_helper_required
 def manual_book_add(request):
 
     if request.method == "POST":
 
         form = BookForm(request.POST)
 
+        print("POST RECEIVED")
+        print(request.POST)
+
         if form.is_valid():
+
+            print("FORM VALID")
 
             book = form.save()
 
@@ -158,6 +163,10 @@ def manual_book_add(request):
 
             return redirect("catalog")
 
+        else:
+            print("FORM ERRORS:")
+            print(form.errors)
+
     else:
 
         form = BookForm()
@@ -169,3 +178,5 @@ def manual_book_add(request):
             "form": form,
         },
     )
+
+

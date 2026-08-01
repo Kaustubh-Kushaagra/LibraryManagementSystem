@@ -5,7 +5,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 from openpyxl.utils import get_column_letter
 
-from accounts.decorators import librarian_required
+from accounts.decorators import library_helper_required,head_librarian_required
 from books.models import LibraryItem
 from django.contrib.auth import get_user_model
 from transactions.models import Transaction
@@ -13,7 +13,7 @@ from django.utils import timezone
 
 
 @login_required
-@librarian_required
+@library_helper_required
 def export_books_excel(request):
 
     workbook = Workbook()
@@ -118,7 +118,7 @@ def export_books_excel(request):
     return response
 
 @login_required
-@librarian_required
+@library_helper_required
 def export_members_excel(request):
 
     User = get_user_model()
@@ -203,7 +203,7 @@ def export_members_excel(request):
     return response
 
 @login_required
-@librarian_required
+@library_helper_required
 def export_issued_books_excel(request):
 
     workbook = Workbook()
@@ -297,7 +297,7 @@ def export_issued_books_excel(request):
 
 
 @login_required
-@librarian_required
+@library_helper_required
 def export_overdue_books_excel(request):
 
     workbook = Workbook()
@@ -397,7 +397,7 @@ def export_overdue_books_excel(request):
     return response
 
 @login_required
-@librarian_required
+@library_helper_required
 def reports_home(request):
 
     return render(

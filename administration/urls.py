@@ -10,6 +10,12 @@ urlpatterns = [
     ),
 
     path(
+        "users/",
+        views.manage_users,
+        name="manage_users",
+    ),
+
+    path(
         "backup/",
         views.backup_database,
         name="backup_database",
@@ -38,5 +44,7 @@ urlpatterns = [
         views.send_overdue_reminders_view,
         name="send_overdue_reminders",
     ),
+
+    
 
 ]

@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}
+Notifications
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white">
+
+    <div class="d-flex justify-content-between align-items-center">
+
+        <h3 class="mb-0">
+            🔔 Notifications
+        </h3>
+
+        <div>
+
+            <a
+                href="{% url 'mark_all_read' %}"
+                class="btn btn-sm btn-light">
+
+                ✓ Mark All Read
+
+            </a>
+
+            <span class="badge bg-primary ms-2">
+
+                {{ page_obj.paginator.count }}
+
+            </span>
+
+        </div>
+
+    </div>
+
+</div>
+
+        <div class="card-body p-0">
+
+            {% if page_obj %}
+
+                <div class="list-group list-group-flush">
+
+                    {% for notification in page_obj %}
+
+                        <a
+                            href="{% url 'read_notification' notification.pk %}"
+                            class="list-group-item list-group-item-action {% if not notification.is_read %}fw-bold{% endif %}">
+
+                            <div class="d-flex justify-content-between">
+
+                                <h6 class="mb-1">
+
+                                    {{ notification.title }}
+
+                                </h6>
+
+                                <small>
+
+                                    {{ notification.created_at|timesince }} ago
+
+                                </small>
+
+                            </div>
+
+                            <p class="mb-1">
+
+                                {{ notification.message }}
+
+                            </p>
+
+                            {% if not notification.is_read %}
+
+                                <span class="badge bg-primary">
+
+                                    New
+
+                                </span>
+
+                            {% endif %}
+
+                        </a>
+
+                    {% empty %}
+
+                        <div class="p-5 text-center">
+
+                            <h5>No notifications.</h5>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Q
 from books.models import LibraryItem
 from .models import BookRequest
-from django.contrib.admin.views.decorators import staff_member_required
+from accounts.decorators import library_helper_required
 from .forms import ApproveRequestForm, RejectRequestForm
 from django.utils import timezone
 from datetime import timedelta
@@ -86,7 +86,7 @@ def request_book(request, accession_number):
 
 
 @login_required
-@staff_member_required
+@library_helper_required
 def pending_requests(request):
 
     requests = (
@@ -111,7 +111,7 @@ def pending_requests(request):
     )
 
 @login_required
-@staff_member_required
+@library_helper_required
 def approve_request(request, request_id):
 
     book_request = get_object_or_404(
@@ -180,7 +180,7 @@ def approve_request(request, request_id):
     )
 
 @login_required
-@staff_member_required
+@library_helper_required
 def confirm_collection(request, request_id):
 
     book_request = get_object_or_404(
@@ -238,7 +238,7 @@ def confirm_collection(request, request_id):
     )
 
 @login_required
-@staff_member_required
+@library_helper_required
 def reject_request(request, pk):
 
     if request.user.role != "librarian":
@@ -294,7 +294,7 @@ def reject_request(request, pk):
         },
     )
 
-@staff_member_required
+@library_helper_required
 def collect_book(request, request_id):
 
     book_request = get_object_or_404(

@@ -1,4 +1,4 @@
-from accounts.decorators import librarian_required
+from accounts.decorators import library_helper_required, head_librarian_required
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
@@ -15,7 +15,7 @@ from django.urls import reverse
 
 
 @login_required
-@librarian_required
+@library_helper_required
 def issue_book(request, accession_number):
 
     book = get_object_or_404(
@@ -80,7 +80,7 @@ def issue_book(request, accession_number):
 
 
 @login_required
-@librarian_required
+@library_helper_required
 def return_book(request, transaction_id):
 
     transaction = get_object_or_404(
@@ -156,7 +156,7 @@ def my_books(request):
 
 
 
-@librarian_required
+@library_helper_required
 def manage_transactions(request):
 
     transactions = (
@@ -217,7 +217,7 @@ def request_return(request, transaction_id):
 
     return redirect("my_books")
 
-@librarian_required
+@library_helper_required
 def pending_returns(request):
 
     transactions = (
@@ -241,7 +241,7 @@ def pending_returns(request):
         },
     )
 
-@librarian_required
+@library_helper_required
 def approve_return(request, transaction_id):
 
     transaction = get_object_or_404(

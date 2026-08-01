@@ -101,7 +101,7 @@
                             👁
                         </a>
 
-                        {% if user.role == "librarian" %}
+                        {% if user.role == "head_librarian" or user.role == "library_helper" %}
 
                         <a
                             href="{% url 'edit_book' book.accession_number %}"

@@ -19,7 +19,7 @@ Dashboard
         </p>
     </div>
 
-{% if user.role == "librarian" %}
+{% if user.role == "head_librarian" %}
 
 <!-- Statistics -->
 
@@ -68,7 +68,9 @@ Dashboard
 </div>
 
 <!-- Members + Quick Actions -->
+{% endif %}
 
+{% if user.role == "library_helper" or user.role == "head_librarian" %}
 <div class="row g-4 mb-4">
 
     <div class="col-lg-6">
@@ -504,7 +506,6 @@ Dashboard
     </div>
 
 </div>
-
 
 
 

@@ -35,6 +35,29 @@ urlpatterns = [
         name="delete_book",
     ),
 
-    
+
+    path(
+        "ajax/create-author/",
+        views.create_author,
+        name="create_author",
+    ),
+
+    path(
+        "ajax/create-publisher/",
+        views.create_publisher,
+        name="create_publisher",
+    ),
+
+    path(
+        "ajax/create-category/",
+        views.create_category,
+        name="create_category",
+    ),
+
+    path(
+        "ajax/create-donor/",
+        views.create_donor,
+        name="create_donor",
+    ),
 
 ]

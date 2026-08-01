@@ -89,7 +89,7 @@ def register(request):
 @login_required
 def dashboard(request):
 
-    if request.user.role == "librarian":
+    if request.user.role != "member":
 
         total_books = LibraryItem.objects.count()
 

@@ -9,13 +9,121 @@ from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
-from accounts.decorators import librarian_required
+from accounts.decorators import library_helper_required,head_librarian_required
 from django.http import JsonResponse
 from audit.models import AuditLog
 from audit.utils import log_action
 from .forms import BookForm
 from django.template.loader import render_to_string
+from django.views.decorators.http import require_POST
+from .models import Author, Publisher, Category
+from donors.models import Donor
 
+
+@login_required
+@library_helper_required
+@require_POST
+def create_author(request):
+
+    name = request.POST.get("name", "").strip()
+
+    if not name:
+        return JsonResponse(
+            {"success": False, "message": "Name required"}
+        )
+
+    author, created = Author.objects.get_or_create(name=name)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "id": author.id,
+            "name": author.name,
+            "created": created,
+        }
+    )
+
+
+@login_required
+@library_helper_required
+@require_POST
+def create_publisher(request):
+
+    name = request.POST.get("name", "").strip()
+
+    if not name:
+        return JsonResponse(
+            {"success": False}
+        )
+
+    publisher, created = Publisher.objects.get_or_create(name=name)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "id": publisher.id,
+            "name": publisher.name,
+            "created": created,
+        }
+    )
+
+
+@login_required
+@library_helper_required
+@require_POST
+def create_category(request):
+
+    name = request.POST.get("name", "").strip()
+
+    if not name:
+        return JsonResponse(
+            {"success": False}
+        )
+
+    category, created = Category.objects.get_or_create(name=name)
+
+    return JsonResponse(
+        {
+            "success": True,
+            "id": category.id,
+            "name": category.name,
+            "created": created,
+        }
+    )
+
+
+@login_required
+@library_helper_required
+@require_POST
+def create_donor(request):
+
+    name = request.POST.get("name", "").strip()
+
+    employee_code = request.POST.get(
+        "employee_code",
+        "",
+    ).strip()
+
+    if not name:
+        return JsonResponse(
+            {"success": False}
+        )
+
+    donor, created = Donor.objects.get_or_create(
+        name=name,
+        defaults={
+            "employee_code": employee_code,
+        },
+    )
+
+    return JsonResponse(
+        {
+            "success": True,
+            "id": donor.id,
+            "name": donor.name,
+            "created": created,
+        }
+    )
 
 def filter_books(books, query):
     """
@@ -28,7 +136,8 @@ def filter_books(books, query):
             | Q(accession_number__icontains=query)
             | Q(author__name__icontains=query)
             | Q(publisher__name__icontains=query)
-        )
+            | Q(category__name__icontains=query)
+        ).distinct()
 
     return books
 def catalog(request):
@@ -220,7 +329,7 @@ def book_detail(request, accession_number):
     )
 
 @login_required
-@librarian_required
+@library_helper_required
 def edit_book(request, accession_number):
 
     book = get_object_or_404(
@@ -271,7 +380,7 @@ def edit_book(request, accession_number):
     )
 
 @login_required
-@librarian_required
+@head_librarian_required
 def delete_book(request, accession_number):
 
     book = get_object_or_404(

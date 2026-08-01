@@ -7,8 +7,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.http import FileResponse, Http404
-
-from accounts.decorators import librarian_required
+from accounts.models import User
+from accounts.decorators import library_helper_required, head_librarian_required
 from audit.utils import log_action
 from django.contrib import messages
 
@@ -21,7 +21,7 @@ from audit.utils import log_action
 
 
 @login_required
-@librarian_required
+@library_helper_required
 def home(request):
 
     return render(
@@ -31,7 +31,7 @@ def home(request):
 
 
 @login_required
-@librarian_required
+@library_helper_required
 def backup_database(request):
 
     backup_dir = settings.BACKUP_DIR
@@ -102,7 +102,7 @@ def backup_database(request):
     )
 
 @login_required
-@librarian_required
+@library_helper_required
 def download_backup(request, filename):
 
     filepath = settings.BACKUP_DIR / filename
@@ -123,7 +123,7 @@ def download_backup(request, filename):
     )
 
 @login_required
-@librarian_required
+@library_helper_required
 def delete_backup(request, filename):
 
     filepath = settings.BACKUP_DIR / filename
@@ -159,7 +159,7 @@ def delete_backup(request, filename):
 
 
 @login_required
-@librarian_required
+@library_helper_required
 def send_due_reminders_view(request):
 
     sent = send_due_reminders()
@@ -179,7 +179,7 @@ def send_due_reminders_view(request):
 
 
 @login_required
-@librarian_required
+@library_helper_required
 def send_overdue_reminders_view(request):
 
     sent = send_overdue_reminders()
@@ -196,3 +196,48 @@ def send_overdue_reminders_view(request):
     )
 
     return redirect("administration_home")
+
+@login_required
+@head_librarian_required
+def manage_users(request):
+
+    users = User.objects.order_by("username")
+
+    if request.method == "POST":
+
+        for user in users:
+
+            if user == request.user:
+                continue
+
+            if user.role == "head_librarian" and request.POST.get(f"role_{user.id}") != "head_librarian":
+
+                messages.error(
+                    request,
+                    f"{user.username} is a Head Librarian and cannot be demoted from here."
+                )
+
+                continue
+
+            new_role = request.POST.get(f"role_{user.id}")
+
+            if new_role and new_role != user.role:
+
+                user.role = new_role
+                user.save()
+
+        messages.success(
+            request,
+            "User roles updated successfully."
+        )
+
+        return redirect("manage_users")
+
+    return render(
+        request,
+        "administration/manage_users.html",
+        {
+            "users": users,
+            "roles": User.ROLE_CHOICES,
+        },
+    )

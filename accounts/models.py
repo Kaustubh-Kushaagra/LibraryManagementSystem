@@ -4,16 +4,18 @@ from django.db import models
 
 class User(AbstractUser):
 
-    LIBRARIAN = "librarian"
+    HEAD_LIBRARIAN = "head_librarian"
+    LIBRARY_HELPER = "library_helper"
     MEMBER = "member"
 
-    ROLE_CHOICES = (
-        (LIBRARIAN, "Librarian"),
+    ROLE_CHOICES = [
+        (HEAD_LIBRARIAN, "Head Librarian"),
+        (LIBRARY_HELPER, "Library Helper"),
         (MEMBER, "Member"),
-    )
+    ]
 
     role = models.CharField(
-        max_length=20,
+        max_length=30,
         choices=ROLE_CHOICES,
         default=MEMBER,
     )

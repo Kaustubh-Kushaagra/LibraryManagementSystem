@@ -1,4 +1,5 @@
 COLUMN_ALIASES = {
+
     "accession_number": [
         "Book No. / Accession No.",
         "Accession No.",
@@ -27,21 +28,32 @@ COLUMN_ALIASES = {
     "publisher": [
         "Publisher",
         "Publication",
+        "Name & Address of Publishor",
+        "Name & Address of Publisher",
     ],
 
     "publication_year": [
         "Year",
         "Publication Year",
+        "Year of Publication",
     ],
 
     "pages": [
         "Pages",
+        "Page",
         "No. of Pages",
     ],
 
     "price": [
         "Price",
+        "Rate",
+        "Rate in Rs.",
+        "Rate in Rs. ",
+    ],
+
+    "cost": [
         "Cost",
+        "Cost in Rs.",
     ],
 
     "volume_qty": [
@@ -68,4 +80,15 @@ COLUMN_ALIASES = {
         "Remarks",
         "Remark",
     ],
+
+    "category": [
+        "Category",
+        "Book Category",
+        "Subject",
+    ],
+
+    "date_added": [
+        "Date",
+        "Added Date",
+    ]
 }
