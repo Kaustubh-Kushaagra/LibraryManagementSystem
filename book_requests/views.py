@@ -59,7 +59,10 @@ def request_book(request, accession_number):
     User = get_user_model()
 
     librarians = User.objects.filter(
-        role="librarian",
+        role__in=[
+            "head_librarian",
+            "library_helper",
+        ]
     )
 
     for librarian in librarians:
@@ -139,11 +142,12 @@ def approve_request(request, request_id):
 
                 book=book_request.book,
 
-                due_date=timezone.now().date() + timedelta(days=14),
-
                 status=Transaction.PENDING_PICKUP,
 
             )
+            book = book_request.book
+            book.status = LibraryItem.PENDING_PICKUP
+            book.save(update_fields=["status"])
 
             book_request.transaction = transaction
 
@@ -194,15 +198,13 @@ def confirm_collection(request, request_id):
         transaction = book_request.transaction
 
         transaction.status = Transaction.ISSUED
+        transaction.issued_at = timezone.now()
+        transaction.due_date = timezone.now().date() + timedelta(days=14)
         transaction.save()
 
         book = transaction.book
-
         book.status = LibraryItem.ISSUED
-        book.save()
-
-        book_request.status = BookRequest.COLLECTED
-        book_request.save()
+        book.save(update_fields=["status"])
 
         create_notification(
             user=book_request.member,

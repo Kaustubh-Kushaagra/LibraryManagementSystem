@@ -1,30 +1,28 @@
-# Environment secrets
-.env
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
 
 # Virtual environment
 venv/
 env/
 .venv/
 
-# Python cache
-__pycache__/
-*.py[cod]
-
-# Django database
+# Django
 db.sqlite3
+*.sqlite3
 
-# User uploaded files
+# Environment variables
+.env
+
+# Static & media
 media/
+staticfiles/
 
-# Django generated files
-*.log
-
-# IDE files
+# IDE
 .vscode/
 .idea/
 
-# Database backups
-backups/
-
-# Collected static files
-staticfiles/
+# OS
+.DS_Store
+Thumbs.db

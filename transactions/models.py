@@ -39,10 +39,14 @@ class Transaction(models.Model):
     )
 
     issued_at = models.DateTimeField(
-        auto_now_add=True,
+        null=True,
+        blank=True,
     )
 
-    due_date = models.DateField()
+    due_date = models.DateField(
+        null=True,
+        blank=True,
+    )
 
     returned_at = models.DateTimeField(
         blank=True,

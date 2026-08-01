@@ -71,12 +71,14 @@ class LibraryItem(models.Model):
 
     AVAILABLE = "Available"
     ISSUED = "Issued"
+    PENDING_PICKUP = "Pending Pickup"
     MAINTENANCE = "Maintenance"
     ARCHIVED = "Archived"
 
     STATUS_CHOICES = [
         (AVAILABLE, "Available"),
         (ISSUED, "Issued"),
+        (PENDING_PICKUP, "Pending Pickup"),
         (MAINTENANCE, "Maintenance"),
         (ARCHIVED, "Archived"),
     ]

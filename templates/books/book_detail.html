@@ -346,65 +346,77 @@
 
                     <tbody>
 
-                        {% for transaction in history %}
+{% for transaction in history %}
 
-                        <tr>
+<tr>
 
-                            <td>
-                                {{ transaction.member.get_full_name|default:transaction.member.username }}
-                            </td>
+    <td>
+        {{ transaction.member.get_full_name|default:transaction.member.username }}
+    </td>
 
-                            <td>
-                                {{ transaction.issued_at|date:"d M Y" }}
-                            </td>
+    <td>
+        {% if transaction.issued_at %}
+            {{ transaction.issued_at|date:"d M Y" }}
+        {% else %}
+            —
+        {% endif %}
+    </td>
 
-                            <td>
-                                {{ transaction.due_date|date:"d M Y" }}
-                            </td>
+    <td>
+        {% if transaction.due_date %}
+            {{ transaction.due_date|date:"d M Y" }}
+        {% else %}
+            —
+        {% endif %}
+    </td>
 
-                            <td>
+    <td>
+        {% if transaction.returned_at %}
+            {{ transaction.returned_at|date:"d M Y" }}
+        {% else %}
+            —
+        {% endif %}
+    </td>
 
-                                {% if transaction.returned_at %}
+    <td>
 
-                                    {{ transaction.returned_at|date:"d M Y" }}
+        {% if transaction.status == "Pending Pickup" %}
 
-                                {% else %}
+            <span class="badge bg-info text-dark">
+                📦 Pending Pickup
+            </span>
 
-                                    —
+        {% elif transaction.status == "Issued" %}
 
-                                {% endif %}
+            {% if transaction.overdue_days > 0 %}
 
-                            </td>
+                <span class="badge bg-danger">
+                    🔴 {{ transaction.overdue_days }} Day{{ transaction.overdue_days|pluralize }} Overdue
+                </span>
 
-                            <td>
+            {% else %}
 
-                                {% if transaction.status == "Returned" %}
+                <span class="badge bg-warning text-dark">
+                    📖 Issued
+                </span>
 
-                                    <span class="badge bg-success">
-                                        ✅ Returned
-                                    </span>
+            {% endif %}
 
-                                {% elif transaction.overdue_days > 0 %}
+        {% elif transaction.status == "Returned" %}
 
-                                    <span class="badge bg-danger">
-                                        🔴 {{ transaction.overdue_days }} Day{{ transaction.overdue_days|pluralize }} Overdue
-                                    </span>
+            <span class="badge bg-success">
+                ✅ Returned
+            </span>
 
-                                {% else %}
+        {% endif %}
 
-                                    <span class="badge bg-warning text-dark">
-                                        📖 Issued
-                                    </span>
+    </td>
 
-                                {% endif %}
+</tr>
 
-                            </td>
+{% endfor %}
 
-                        </tr>
-
-                        {% endfor %}
-
-                    </tbody>
+</tbody>
 
                 </table>
 
