@@ -1,4 +1,4 @@
-MVTC Library
+MVTC,NAINI Library
 
 Dear {{ member.get_full_name|default:member.username }},
 
@@ -25,4 +25,4 @@ If you have already returned it, kindly ignore this email.
 
 Thank you.
 
-MVTC Library
+MVTC,NAINI Library
