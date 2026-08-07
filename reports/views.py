@@ -21,7 +21,7 @@ def export_books_excel(request):
     worksheet = workbook.active
     worksheet.title = "Book Catalogue"
 
-    worksheet.merge_cells("A1:G1")
+    worksheet.merge_cells("A1:O1")
 
     title = worksheet["A1"]
     title.value = "MVTC Library Management System"
@@ -38,6 +38,14 @@ def export_books_excel(request):
         "Author",
         "Publisher",
         "Category",
+        "Publication Year",
+        "Pages",
+        "Rate in Rs.",
+        "Volume Qty",
+        "Source",
+        "Location",
+        "Remarks",
+        "Date Added",
         "Status",
     ]
 
@@ -80,7 +88,18 @@ def export_books_excel(request):
         worksheet.cell(row=row, column=4).value = str(book.author)
         worksheet.cell(row=row, column=5).value = str(book.publisher)
         worksheet.cell(row=row, column=6).value = str(book.category)
-        worksheet.cell(row=row, column=7).value = book.status
+        worksheet.cell(row=row, column=7).value = book.publication_year
+        worksheet.cell(row=row, column=8).value = book.pages
+        worksheet.cell(row=row, column=9).value = book.price
+        worksheet.cell(row=row, column=10).value = book.volume_qty
+        worksheet.cell(row=row, column=11).value = book.source
+        worksheet.cell(row=row, column=12).value = book.location
+        worksheet.cell(row=row, column=13).value = book.remarks
+        worksheet.cell(row=row, column=14).value = (
+            book.date_added.strftime("%d-%m-%Y")
+            if book.date_added else ""
+        )
+        worksheet.cell(row=row, column=15).value = book.status
 
         row += 1
 
@@ -188,7 +207,7 @@ def export_members_excel(request):
         ].width = length + 4
 
     worksheet.freeze_panes = "A4"
-    worksheet.auto_filter.ref = f"A3:F{row-1}"
+    worksheet.auto_filter.ref = f"A3:O{row-1}"
 
     response = HttpResponse(
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
